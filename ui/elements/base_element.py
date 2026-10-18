@@ -56,3 +56,11 @@ class BaseElement:
         with allure.step(step):
             logger.info(step)
             expect(locator).to_have_value(value)
+
+    def check_have_attribute(self, attribute_name: str, expected_value: str, nth: int = 0, **kwargs):
+        locator = self.get_locator(nth, **kwargs)
+        value_str = f'"{expected_value}"' if expected_value is not None else ""
+        step = f'Checking that {self.type_of} "{self.name}" has attribute "{attribute_name}" = {value_str}'
+        with allure.step(step):
+            logger.info(step)
+            expect(locator).to_have_attribute(attribute_name, expected_value)

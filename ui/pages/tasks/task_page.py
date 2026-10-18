@@ -3,7 +3,9 @@ from typing import List
 from playwright.sync_api import Page, Locator
 
 from ui.components.attachments.attachment_card_component import AttachmentCardComponent
+from ui.components.attachments.attachments_component import AttachmentsComponent
 from ui.components.comments.comment_card_component import CommentCardComponent
+from ui.components.comments.comments_component import CommentsComponent
 from ui.components.navbar_component import NavbarComponent
 from ui.elements.Text import Text
 from ui.elements.button import Button
@@ -52,36 +54,9 @@ class TaskPage(BasePage):
                                      "Task page updated label")
         self.updated = Text(page, "task-updated",
                                 "Task page updated")
+        self.comments = CommentsComponent(page)
+        self.attachments = AttachmentsComponent(page)
 
-        self.comments_title = Text(page, "task-comments-title",
-                                  "Task page comments title")
-        self.attachments_title = Text(page, "task-attachments-title",
-                                     "Task page attachments title")
-        self.upload_attachments_button = Button(page, "upload-attachments-button",
-                                              "Task page upload attachments button")
-
-        self.new_comment_textarea = Textarea(page, "new-comment-textarea",
-                                            "Task page new comment textarea")
-        self.submit_comment_button = Button(page, "submit-comment-button",
-                                           "Task page submit comment button")
-
-    @property
-    def _all_comments_cards(self) -> Locator:
-        return self.page.get_by_test_id("comment-card")
-
-    @property
-    def comments_cards(self) -> List[CommentCardComponent]:
-        count = self._all_comments_cards.count()
-        return [CommentCardComponent(self.page, index=i) for i in range(count)]
-
-    @property
-    def _all_attachments_cards(self) -> Locator:
-        return self.page.get_by_test_id("attachment-card")
-
-    @property
-    def attachments_cards(self) -> List[AttachmentCardComponent]:
-        count = self._all_attachments_cards.count()
-        return [AttachmentCardComponent(self.page, index=i) for i in range(count)]
 
     def check_back_link(self, project_id: str):
         self.back_link.check_visible()
@@ -150,41 +125,3 @@ class TaskPage(BasePage):
         self.updated_label.check_have_text("Обновлено:")
         self.updated.check_visible()
         self.updated.check_have_text(updated)
-
-    def check_comments_title(self):
-        self.comments_title.check_visible()
-        self.comments_title.check_have_text(f"Комментарии ({self._all_comments_cards.count()})")
-
-    def check_attachments_title(self):
-        self.attachments_title.check_visible()
-        self.attachments_title.check_have_text(f"Вложения ({self._all_attachments_cards.count()})")
-
-    def check_upload_attachments_button(self):
-        self.upload_attachments_button.check_visible()
-        self.upload_attachments_button.check_enabled()
-        self.upload_attachments_button.check_have_text("Загрузить вложение")
-
-    def check_comments_cards(self, data: dict | None = None):
-        for card in self.comments_cards:
-            card.check_card(data)
-            card.check_edit_button()
-            card.check_delete_button()
-
-    def check_attachments_cards(self, data: dict | None = None):
-        for card in self.attachments_cards:
-            card.check_card(data)
-            card.check_download_button()
-            card.check_delete_button()
-
-    def check_new_comment_textarea(self, text: str | None = None):
-        self.new_comment_textarea.check_visible()
-        if text is None:
-            self.new_comment_textarea.check_have_attribute("placeholder",
-                                                           "Напишите комментарий...")
-        else:
-            self.new_comment_textarea.check_have_text(text)
-
-    def check_submit_comment_button(self):
-        self.submit_comment_button.check_visible()
-        self.submit_comment_button.check_enabled()
-        self.submit_comment_button.check_have_text("Отправить")

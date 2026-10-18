@@ -44,3 +44,8 @@ class AttachmentCardComponent(BaseComponent):
 
     def click_delete_button(self):
         self.delete_button.click(nth=self.index)
+
+    def check_attachment(self, data: dict | None = None):
+        self.check_card(data)
+        self.check_download_button()
+        self.check_delete_button()

@@ -33,3 +33,6 @@ class Textarea(BaseElement):
         with allure.step(step):
             logger.info(step)
             expect(locator).to_have_attribute(name, value)
+
+    def check_have_placeholder(self, expected_placeholder: str, nth: int = 0, **kwargs):
+        self.check_have_attribute("placeholder", expected_placeholder, nth, **kwargs)
