@@ -19,6 +19,7 @@ class RegistrationFormComponent(BaseComponent):
         self.first_name_input = Input(page, "register-firstname-input", "First name input")
         self.last_name_input = Input(page, "register-lastname-input", "Last name input")
         self.registration_button = Button(page, "register-button", "Registration button")
+        self.error_message = Text(page, "register-error-message", "Registration page error message")
 
     def check_email_input(self, email: str | None = None):
         self.email_input.check_visible()
@@ -49,9 +50,14 @@ class RegistrationFormComponent(BaseComponent):
         if data is not None:
             self.check_email_input(data['email'])
             self.check_password_input(data['password'])
-            self.check_first_name_input(data['firstname'])
-            self.check_last_name_input(data['lastname'])
+            self.check_first_name_input(data['first_name'])
+            self.check_last_name_input(data['last_name'])
             self.check_registration_button()
+
+    def check_error_message(self, email: str | None = None):
+        self.error_message.check_visible()
+        if email:
+            self.error_message.check_have_text(f"User with email {email} already exists")
 
     def fill_email(self, email: str):
         self.email_input.fill(email)
@@ -72,5 +78,5 @@ class RegistrationFormComponent(BaseComponent):
         if data is not None:
             self.fill_email(data['email'])
             self.fill_password(data['password'])
-            self.fill_first_name(data['firstname'])
-            self.fill_last_name(data['lastname'])
+            self.fill_first_name(data['first_name'])
+            self.fill_last_name(data['last_name'])

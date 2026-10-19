@@ -62,8 +62,13 @@ class Fake:
     def registration_form(self) -> dict:
         return {"email": self.faker.email(),
                 "password": self.faker.password(),
-                "firstname": self.faker.first_name(),
-                "lastname": self.faker.last_name()}
+                "first_name": self.faker.first_name(),
+                "last_name": self.faker.last_name()}
+
+    def project_form(self) -> dict:
+        return {"title": self.faker.sentence(),
+                "description": self.faker.text()
+                }
 
 
 fake = Fake(faker=Faker())

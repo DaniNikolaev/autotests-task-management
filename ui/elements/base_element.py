@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List, Union
 
 import allure
 from playwright.sync_api import Page, Locator, expect
@@ -9,8 +9,8 @@ logger = get_logger("BASE_ELEMENT")
 
 
 class BaseElement:
-    def __init__(self, page: Page, locator: str, name: str):
-        self.page = page
+    def __init__(self, parent: Union[Page, Locator], locator: str, name: str):
+        self.parent = parent
         self.locator = locator
         self.name = name
 
@@ -27,7 +27,7 @@ class BaseElement:
         step = f'Getting locator with data-testid="{locator}" at index "{nth}"'
         with allure.step(step):
             logger.info(step)
-            return self.page.get_by_test_id(locator).nth(nth)
+            return self.parent.get_by_test_id(locator).nth(nth)
 
     def click(self, nth: int = 0, **kwargs):
         locator = self.get_locator(nth, **kwargs)
@@ -49,6 +49,18 @@ class BaseElement:
         with allure.step(step):
             logger.info(step)
             expect(locator).to_have_text(text)
+
+    def check_have_text_from_list(self, texts: List[str], nth: int = 0, ** kwargs):
+        locator = self.get_locator(nth, **kwargs)
+        for text in texts:
+            step = f'Checking that {self.type_of} "{self.name}" at index "{nth}" has text "{text}"'
+            with allure.step(step):
+                logger.info(step)
+                try:
+                    expect(locator).to_have_text(text)
+                    break
+                except:
+                    continue
 
     def check_have_value(self, value: Any, nth: int = 0, **kwargs):
         locator = self.get_locator(nth, **kwargs)

@@ -17,7 +17,7 @@ class LoginFormComponent(BaseComponent):
         self.email_input = Input(page, "login-email-input", "Email input")
         self.password_input = Input(page, "login-password-input", "Password input")
         self.login_button = Button(page, "login-button", "Login button")
-
+        self.error_message = Text(page, "login-error-message", "Login error message")
 
     def check_email_input(self, email: str | None = None):
         self.email_input.check_visible()
@@ -39,6 +39,10 @@ class LoginFormComponent(BaseComponent):
             self.check_email_input(data['email'])
             self.check_password_input(data['password'])
             self.check_login_button()
+
+    def check_error_message(self):
+        self.error_message.check_visible()
+        self.error_message.check_have_text_from_list(["Неверный email или пароль", "Invalid credentials"])
 
     def fill_email(self, email: str):
         self.email_input.fill(email)

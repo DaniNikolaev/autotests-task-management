@@ -1,8 +1,10 @@
 from enum import Enum
 from typing import Self
 
-from pydantic import BaseModel, HttpUrl, FilePath, ConfigDict, DirectoryPath
+from pydantic import BaseModel, HttpUrl, FilePath, ConfigDict, DirectoryPath, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from tools.api.fakers import fake
 
 
 class HTTPClientConfig(BaseModel):
@@ -21,10 +23,10 @@ class Browser(str, Enum):
 
 
 class TestUser(BaseModel):
-    email: str
-    password: str
-    first_name: str
-    last_name: str
+    email: str = Field(default_factory=fake.email)
+    password: str = Field(default_factory=fake.password)
+    first_name: str = Field(default_factory=fake.first_name)
+    last_name: str = Field(default_factory=fake.last_name)
 
 
 class TestData(BaseModel):
@@ -39,6 +41,7 @@ class Settings(BaseSettings):
         env_nested_delimiter=".",
     )
     test_data: TestData
+    test_user: TestUser
     http_client: HTTPClientConfig
     allure_results_dir: DirectoryPath | None = None
 
@@ -55,13 +58,13 @@ class Settings(BaseSettings):
         videos_dir = DirectoryPath("./videos")
         tracing_dir = DirectoryPath("./tracing")
         browser_state_file = FilePath("browser-state.json")
-
         allure_results_dir.mkdir(exist_ok=True)
         videos_dir.mkdir(exist_ok=True)
         tracing_dir.mkdir(exist_ok=True)
         browser_state_file.touch(exist_ok=True)
 
         return Settings(allure_results_dir=allure_results_dir,
+                        test_user=TestUser(),
                         videos_dir=videos_dir,
                         tracing_dir=tracing_dir,
                         browser_state_file=browser_state_file)

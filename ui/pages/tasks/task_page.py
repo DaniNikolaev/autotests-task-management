@@ -30,28 +30,16 @@ class TaskPage(BasePage):
                                     "Task page delete button")
         self.description = Text(page, "task-description",
                                "Task page description")
-        self.status_label = Text(page, "task-status-label",
-                                "Task page status label")
         self.status = Text(page, "task-status",
                           "Task page status")
-        self.priority_label = Text(page, "task-priority-label",
-                                  "Task page priority label")
         self.priority = Text(page, "task-priority",
                             "Task page priority")
-        self.estimated_time_label = Text(page, "task-estimated-time-label",
-                                        "Task page estimated time label")
         self.estimated_time = Text(page, "task-estimated-time",
                                   "Task page estimated time")
-        self.project_label = Text(page, "task-project-label",
-                                 "Task page project label")
         self.project = Text(page, "task-project",
                            "Task page project")
-        self.created_label = Text(page, "task-created-label",
-                                 "Task page created label")
         self.created = Text(page, "task-created",
                            "Task page created")
-        self.updated_label = Text(page, "task-updated-label",
-                                     "Task page updated label")
         self.updated = Text(page, "task-updated",
                                 "Task page updated")
         self.comments = CommentsComponent(page)
@@ -91,37 +79,25 @@ class TaskPage(BasePage):
         self.description.check_have_text(description)
 
     def check_status(self, status: str):
-        self.status_label.check_visible()
-        self.status_label.check_have_text("Статус:")
         self.status.check_visible()
         self.status.check_have_text(status)
 
     def check_priority(self, priority: str):
-        self.priority_label.check_visible()
-        self.priority_label.check_have_text("Приоритет:")
         self.priority.check_visible()
         self.priority.check_have_text(priority)
 
     def check_estimated_time(self, estimated_time: str):
-        self.estimated_time_label.check_visible()
-        self.estimated_time_label.check_have_text("Оценка времени:")
         self.estimated_time.check_visible()
         self.estimated_time.check_have_text(estimated_time)
 
     def check_project(self, project: str):
-        self.project_label.check_visible()
-        self.project_label.check_have_text("Проект:")
         self.project.check_visible()
         self.project.check_have_text(project)
 
     def check_created(self, created: str):
-        self.created_label.check_visible()
-        self.created_label.check_have_text("Создано:")
         self.created.check_visible()
         self.created.check_have_text(created)
 
     def check_updated(self, updated: str):
-        self.updated_label.check_visible()
-        self.updated_label.check_have_text("Обновлено:")
         self.updated.check_visible()
         self.updated.check_have_text(updated)

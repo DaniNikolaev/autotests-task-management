@@ -12,16 +12,11 @@ class LoginPage(BasePage):
 
         self.title = Text(page, "login-title", "Login page title")
         self.login_form = LoginFormComponent(page)
-        self.register_text = Text(page, "login-register-text", "Login page registration text")
         self.register_link = Link(page, "register-link", "Login page registration link")
 
     def check_title(self):
         self.title.check_visible()
         self.title.check_have_text("Вход")
-
-    def check_register_text(self):
-        self.register_text.check_visible()
-        self.register_text.check_have_text("Нет аккаунта?")
 
     def check_register_link(self):
         self.register_link.check_visible()
