@@ -1,6 +1,11 @@
+from typing import Generator, Any, List
+
 import pytest
 from playwright.sync_api import Page
 
+from api.clients.projects.projects_client import ProjectsClient
+from api.clients.projects.projects_schema import CreateProjectRequestSchema, ProjectSchema
+from tools.api.fakers import fake
 from tools.ui.routes import AppRoute
 from ui.pages.authentication.login_page import LoginPage
 from ui.pages.authentication.registration_page import RegistrationPage
@@ -22,7 +27,25 @@ def login_page(browser_page: Page) -> LoginPage:
 
 
 @pytest.fixture
-def projects_page(browser_page_with_state: Page) -> ProjectsPage:
-    p = ProjectsPage(page=browser_page_with_state)
+def projects_page(browser_page: Page) -> ProjectsPage:
+    p = ProjectsPage(page=browser_page)
     p.visit(AppRoute.PROJECTS)
     return p
+
+
+@pytest.fixture
+def projects_page_with_auth(browser_page_with_auth: Page) -> ProjectsPage:
+    p = ProjectsPage(page=browser_page_with_auth)
+    p.visit(AppRoute.PROJECTS)
+    return p
+
+
+@pytest.fixture
+def projects_page_with_data(
+        browser_page_with_auth: Page,
+        created_projects: List[ProjectSchema]
+) -> Generator[ProjectsPage, Any, None]:
+    projects_page = ProjectsPage(page=browser_page_with_auth)
+    projects_page.visit(AppRoute.PROJECTS)
+
+    yield projects_page

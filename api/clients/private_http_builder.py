@@ -4,13 +4,11 @@ from httpx import Client
 from pydantic import BaseModel
 
 from api.clients.authentication.authentication_client import get_authentication_client
-from api.clients.authentication.authentication_schema import LoginRequestSchema
+from api.clients.authentication.authentication_schema import LoginRequestSchema, AuthenticationUserSchema
 from config import settings
 
 
-class AuthenticationUserSchema(BaseModel, frozen=True):
-    email: str
-    password: str
+
 
 
 @lru_cache(maxsize=None)

@@ -29,3 +29,13 @@ class RefreshResponseSchema(BaseModel):
 class LogoutRequestSchema(BaseModel):
     access_token: str = Field(alias="accessToken")
     refresh_token: str = Field(alias="refreshToken")
+
+
+class AuthenticationUserSchema(BaseModel, frozen=True):
+    email: str
+    password: str
+
+
+class AuthenticatedUserSchema(BaseModel):
+    authentication_user: AuthenticationUserSchema
+    token: TokenSchema

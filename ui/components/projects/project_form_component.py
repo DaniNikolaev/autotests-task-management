@@ -2,6 +2,7 @@ from typing import Literal
 
 from playwright.sync_api import Page
 
+from api.clients.projects.projects_schema import ProjectSchema
 from tools.api.fakers import fake
 from ui.components.base_component import BaseComponent
 from ui.elements.button import Button
@@ -41,9 +42,9 @@ class ProjectFormComponent(BaseComponent):
         else:
             self.submit_button.check_have_text("Обновить")
 
-    def check_project_form(self, data: dict | None = None):
-        self.check_title_input(data['title'] if data else None)
-        self.check_description_input(data['description'] if data else None)
+    def check_project_form(self, data: ProjectSchema | None = None):
+        self.check_title_input(data.title if data else None)
+        self.check_description_input(data.description if data else None)
         self.check_cancel_button()
         self.check_submit_button()
 
@@ -59,9 +60,9 @@ class ProjectFormComponent(BaseComponent):
     def click_submit_button(self):
         self.submit_button.click()
 
-    def fill_project_form(self, data: dict | None = None) -> dict:
+    def fill_project_form(self, data: ProjectSchema | None = None) -> ProjectSchema:
         if data is None:
-            data = fake.project_form()
-        self.fill_title(data['title'])
-        self.fill_description(data['description'])
+            data = ProjectSchema(**fake.project_form())
+        self.fill_title(data.title)
+        self.fill_description(data.description)
         return data

@@ -66,9 +66,14 @@ class Fake:
                 "last_name": self.faker.last_name()}
 
     def project_form(self) -> dict:
-        return {"title": self.faker.sentence(),
-                "description": self.faker.text()
-                }
+        return dict(
+            id=self.faker.uuid4(),
+            title=self.faker.sentence(),
+            description=self.faker.text(),
+            owner_user_id=self.faker.uuid4(),
+            created_at=self.faker.date_time(),
+            updated_at=self.faker.date_time()
+        )
 
 
 fake = Fake(faker=Faker())

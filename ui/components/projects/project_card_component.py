@@ -2,6 +2,7 @@ from typing import Optional
 
 from playwright.sync_api import Page, Locator
 
+from api.clients.projects.projects_schema import ProjectSchema
 from ui.components.base_component import BaseComponent
 from ui.elements.Text import Text
 from ui.elements.button import Button
@@ -46,13 +47,17 @@ class ProjectCardComponent(BaseComponent):
         self.date_created.check_visible()
         self.date_created.check_have_text(date_created)
 
-    def check_card(self, data: dict | None = None):
-        self.check_title(data['title'])
-        self.check_description(data['description'])
-        self.check_owner(data['owner'])
-        self.check_date_created(data['date_created'])
+    def check_entire_card(self, data: ProjectSchema):
+        self.check_title(data.title)
+        self.check_description(data.description)
+        self.check_owner(data.owner_user_id)
+        self.check_date_created(str(data.created_at))
         self.check_edit_button()
         self.check_delete_button()
+
+    def check_title_and_description_card(self, data: ProjectSchema):
+        self.check_title(data.title)
+        self.check_description(data.description)
 
     def check_edit_button(self):
         self.edit_button.check_visible()

@@ -1,7 +1,8 @@
 from typing import List
 
-from playwright.sync_api import Page, Locator
+from playwright.sync_api import Page, Locator, expect
 
+from api.clients.projects.projects_schema import ProjectSchema
 from ui.components.navbar_component import NavbarComponent
 from ui.components.projects.project_card_component import ProjectCardComponent
 from ui.components.projects.project_form_component import ProjectFormComponent
@@ -25,10 +26,9 @@ class ProjectsPage(BasePage):
     def _all_projects_cards(self) -> Locator:
         return self.page.get_by_test_id("project-card")
 
-    def project_card_by_title(self, data: dict) -> ProjectCardComponent:
-        title = data['title']
+    def project_card_by_title(self, title: str) -> ProjectCardComponent:
         card_locator = self._all_projects_cards.filter(has_text=title)
-        #expect(card_locator.first).to_be_visible()
+        expect(card_locator.first).to_be_visible()
         return ProjectCardComponent(self.page, locator=card_locator.first)
 
     @property
@@ -47,8 +47,20 @@ class ProjectsPage(BasePage):
     def click_create_project_button(self):
         self.create_project_button.click()
 
-    def check_projects_cards(self, data_list: List[dict]):
+    def check_entire_projects_cards(self, data_list: List[dict]):
         for card, data in zip(self.projects_cards, data_list):
-            card.check_card(data)
+            card.check_entire_card(data)
+            card.check_edit_button()
+            card.check_delete_button()
+
+    def check_title_and_descriptions_projects_cards(self, data_list: List[ProjectSchema]):
+        actual_count = self._all_projects_cards.count()
+        print(actual_count, len(data_list))
+        assert actual_count == len(data_list)
+
+        for data in data_list:
+            title = data.title if hasattr(data, 'title') else data['title']
+            card = self.project_card_by_title(title)
+            card.check_title_and_description_card(data)
             card.check_edit_button()
             card.check_delete_button()

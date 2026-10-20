@@ -6,3 +6,8 @@ from api.clients.authentication.authentication_client import AuthenticationClien
 @pytest.fixture
 def authentication_client() -> AuthenticationClient:
     return get_authentication_client()
+
+
+@pytest.fixture(scope="session")
+def authentication_client_session() -> AuthenticationClient:
+    return get_authentication_client()
