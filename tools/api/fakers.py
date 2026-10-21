@@ -1,24 +1,24 @@
-from enum import Enum
+from enum import Enum, StrEnum
 
 from faker import Faker
 
 
-class TaskStatus(str, Enum):
+class TaskStatus(StrEnum):
     TODO = "todo"
     IN_PROGRESS = "in_progress"
     DONE = "done"
 
-    def __str__(self):
-        return self.value
+    # def __str__(self):
+    #     return self.value
 
 
-class TaskPriority(str, Enum):
+class TaskPriority(StrEnum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
 
-    def __str__(self):
-        return self.value
+    # def __str__(self):
+    #     return self.value
 
 
 class Fake:
@@ -54,10 +54,10 @@ class Fake:
         return self.faker.random_int(start, end)
 
     def task_status(self) -> str:
-        return self.faker.random_element(list(TaskStatus)).value
+        return self.faker.random_element(list(TaskStatus))
 
     def task_priority(self) -> str:
-        return self.faker.random_element(list(TaskPriority)).value
+        return self.faker.random_element(list(TaskPriority))
 
     def registration_form(self) -> dict:
         return {"email": self.faker.email(),
@@ -75,5 +75,17 @@ class Fake:
             updated_at=self.faker.date_time()
         )
 
-
+    def task_form(self) -> dict:
+        return dict(
+            id=self.faker.uuid4(),
+            title=self.faker.sentence(),
+            description=self.faker.text(),
+            status=self.task_status(),
+            priority=self.task_priority(),
+            estimated_time=self.estimated_time(),
+            related_project_id=self.faker.uuid4(),
+            created_by_user_id=self.faker.uuid4(),
+            created_at=self.faker.date_time(),
+            updated_at=self.faker.date_time()
+        )
 fake = Fake(faker=Faker())

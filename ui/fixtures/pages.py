@@ -9,6 +9,7 @@ from tools.api.fakers import fake
 from tools.ui.routes import AppRoute
 from ui.pages.authentication.login_page import LoginPage
 from ui.pages.authentication.registration_page import RegistrationPage
+from ui.pages.projects.project_page import ProjectPage
 from ui.pages.projects.projects_page import ProjectsPage
 
 
@@ -49,3 +50,21 @@ def projects_page_with_data(
     projects_page.visit(AppRoute.PROJECTS)
 
     yield projects_page
+
+
+@pytest.fixture
+def project_page(browser_page: Page) -> ProjectPage:
+    p = ProjectPage(page=browser_page)
+    p.visit(AppRoute.PROJECTS)
+    return p
+
+
+@pytest.fixture
+def project_page_with_auth(
+        browser_page_with_auth: Page,
+        created_project: ProjectSchema
+) -> Generator[ProjectPage, Any, None]:
+    project_page = ProjectPage(page=browser_page_with_auth)
+    project_page.visit(f"{AppRoute.PROJECTS}/{created_project.id}")
+
+    yield project_page

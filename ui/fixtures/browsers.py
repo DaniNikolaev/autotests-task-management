@@ -25,14 +25,14 @@ def browser_page(request: SubRequest, playwright: Playwright) -> Page:
     yield from initialize_playwright_page(playwright, test_name=request.node.name, browser_type=request.param)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def initialize_browser_state(playwright: Playwright,
-                             session_auth_user: AuthenticatedUserSchema) -> None:
+                             function_auth_user: AuthenticatedUserSchema) -> None:
     browser = playwright.chromium.launch(headless=settings.headless)
     context = browser.new_context(base_url=settings.get_base_url())
     context.add_init_script(f"""
-        localStorage.setItem('accessToken', {json.dumps(session_auth_user.token.access_token)});
-        localStorage.setItem('refreshToken', {json.dumps(session_auth_user.token.refresh_token)});
+        localStorage.setItem('accessToken', {json.dumps(function_auth_user.token.access_token)});
+        localStorage.setItem('refreshToken', {json.dumps(function_auth_user.token.refresh_token)});
     """)
     page = context.new_page()
     page.goto("/login")
@@ -45,3 +45,6 @@ def browser_page_with_auth(initialize_browser_state, request: SubRequest, playwr
                                           test_name=request.node.name,
                                           storage_state=settings.browser_state_file,
                                           browser_type=request.param)
+
+
+

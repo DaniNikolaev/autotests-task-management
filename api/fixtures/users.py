@@ -1,3 +1,5 @@
+from typing import Generator
+
 import pytest
 from pydantic import BaseModel
 
@@ -7,6 +9,7 @@ from api.clients.private_http_builder import AuthenticationUserSchema
 from api.clients.users.private_users_client import get_private_users_client, PrivateUsersClient
 from api.clients.users.public_users_client import PublicUsersClient, get_public_users_client
 from api.clients.users.users_schema import CreateUserRequestSchema, CreateUserResponseSchema
+from tools.api.fakers import fake
 
 
 class UserFixture(BaseModel):
@@ -75,3 +78,36 @@ def session_auth_user(
         ),
         token=login_response.token
     )
+
+
+@pytest.fixture
+def function_auth_user(
+        public_users_client_session: PublicUsersClient,
+        authentication_client_session: AuthenticationClient
+) -> Generator[AuthenticatedUserSchema, None, None]:
+    create_request = CreateUserRequestSchema()
+
+    public_users_client_session.create_user(create_request)
+
+    login_request = LoginRequestSchema(
+        email=create_request.email,
+        password=create_request.password
+    )
+    login_response = authentication_client_session.login(login_request)
+
+    user = AuthenticatedUserSchema(
+        authentication_user=AuthenticationUserSchema(
+            email=create_request.email,
+            password=create_request.password
+        ),
+        token=login_response.token
+    )
+
+    yield user
+
+    try:
+        private_client = get_private_users_client(user.authentication_user)
+        response = private_client.get_user_me()
+        private_client.delete_user_api(str(response.user.id))
+    except Exception as e:
+        pass

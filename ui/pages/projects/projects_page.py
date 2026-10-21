@@ -28,7 +28,7 @@ class ProjectsPage(BasePage):
 
     def project_card_by_title(self, title: str) -> ProjectCardComponent:
         card_locator = self._all_projects_cards.filter(has_text=title)
-        expect(card_locator.first).to_be_visible()
+        card_locator.first.wait_for(state="visible")
         return ProjectCardComponent(self.page, locator=card_locator.first)
 
     @property

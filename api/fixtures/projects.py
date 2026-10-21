@@ -24,9 +24,9 @@ def projects_client(function_user: UserFixture) -> ProjectsClient:
     return get_projects_client(function_user.authentication_user)
 
 
-@pytest.fixture(scope="session")
-def session_projects_client(session_auth_user: AuthenticatedUserSchema) -> ProjectsClient:
-    return get_projects_client(session_auth_user.authentication_user)
+@pytest.fixture
+def projects_client_for_ui(function_auth_user: AuthenticatedUserSchema) -> ProjectsClient:
+    return get_projects_client(function_auth_user.authentication_user)
 
 
 @pytest.fixture
@@ -38,21 +38,48 @@ def function_project(projects_client: ProjectsClient) -> ProjectFixture:
 
 
 @pytest.fixture
+def function_project_for_ui(projects_client_for_ui: ProjectsClient) -> ProjectFixture:
+    request = CreateProjectRequestSchema()
+    response = projects_client_for_ui.create_project(request)
+
+    return ProjectFixture(request=request, response=response)
+
+
+@pytest.fixture
 def created_projects(
-        session_projects_client: ProjectsClient
+        projects_client_for_ui: ProjectsClient
 ) -> Generator[List[ProjectSchema], None, None]:
     projects_data: List[ProjectSchema] = []
     projects_count = fake.integer(1, 5)
 
     for _ in range(projects_count):
         create_project_request = CreateProjectRequestSchema()
-        create_project_response = session_projects_client.create_project(create_project_request)
+        create_project_response = projects_client_for_ui.create_project(create_project_request)
 
         projects_data.append(create_project_response.project)
 
     yield projects_data
     for project in projects_data:
-        #try:
-            response = session_projects_client.delete_project_api(project.id)
-        #except Exception as e:
-           # pass
+        try:
+            projects_client_for_ui.delete_project_api(project.id)
+        except Exception as e:
+            pass
+
+
+@pytest.fixture
+def created_project(
+        projects_client_for_ui: ProjectsClient
+) -> Generator[ProjectSchema, None, None]:
+    project_data: ProjectSchema
+
+    create_project_request = CreateProjectRequestSchema()
+    create_project_response = projects_client_for_ui.create_project(create_project_request)
+
+    project_data = create_project_response.project
+
+    yield project_data
+
+    try:
+        projects_client_for_ui.delete_project_api(project_data.id)
+    except Exception as e:
+        pass

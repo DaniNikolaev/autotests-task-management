@@ -2,8 +2,10 @@ from typing import List
 
 from playwright.sync_api import Page, Locator
 
+from api.clients.projects.projects_schema import ProjectSchema
 from ui.components.navbar_component import NavbarComponent
 from ui.components.tasks.task_card_component import TaskCardComponent
+from ui.components.tasks.task_form_component import TaskFormComponent
 from ui.elements.Text import Text
 from ui.elements.button import Button
 from ui.elements.link import Link
@@ -15,7 +17,7 @@ class ProjectPage(BasePage):
         super().__init__(page)
 
         self.navbar = NavbarComponent(page)
-        self.back_link = Link(page, "back-link",
+        self.back_link = Link(page, "back-to-projects-link",
                               "Project page back link")
         self.title = Text(page, "project-title",
                           "Project page title")
@@ -25,12 +27,8 @@ class ProjectPage(BasePage):
                                    "Project page delete button")
         self.description = Text(page, "project-description",
                                "Project page description")
-        self.owner_label = Text(page, "project-owner-label",
-                               "Project page owner label")
         self.owner = Text(page, "project-owner",
                           "Project page owner")
-        self.date_created_label = Text(page, "project-date-created-label",
-                                      "Project page date created label")
         self.date_created = Text(page, "project-date-created",
                                  "Project page date created")
 
@@ -38,10 +36,17 @@ class ProjectPage(BasePage):
                                "Project page tasks title")
         self.create_task_button = Button(page, "create-task-button",
                                         "Project page create task button")
+        self.create_task_form = TaskFormComponent(page, mode='create')
+        self.edit_task_form = TaskFormComponent(page, mode='edit')
 
     @property
     def _all_tasks_cards(self) -> Locator:
         return self.page.get_by_test_id("task-card")
+
+    def task_card_by_title(self, title: str) -> TaskCardComponent:
+        card_locator = self._all_tasks_cards.filter(has_text=title)
+        card_locator.first.wait_for(state="visible")
+        return TaskCardComponent(self.page, locator=card_locator.first)
 
     @property
     def tasks_cards(self) -> List[TaskCardComponent]:
@@ -65,16 +70,22 @@ class ProjectPage(BasePage):
         self.description.check_have_text(description)
 
     def check_owner(self, owner: str):
-        self.owner_label.check_visible()
         self.owner.check_visible()
-        self.owner_label.check_have_text("Владелец:")
         self.owner.check_have_text(owner)
 
     def check_date_created(self, date_created: str):
-        self.date_created_label.check_visible()
         self.date_created.check_visible()
-        self.date_created_label.check_have_text("Создан:")
         self.date_created.check_have_text(date_created)
+
+    def check_entire_project(self, project: ProjectSchema):
+        self.check_title(project.title)
+        self.check_description(project.description)
+        self.check_owner(project.owner_user_id)
+        self.check_date_created(project.created_at)
+
+    def chek_title_and_description_project(self, project: ProjectSchema):
+        self.check_title(project.title)
+        self.check_description(project.description)
 
     def check_edit_button(self):
         self.edit_button.check_visible()
