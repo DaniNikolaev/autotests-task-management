@@ -6,4 +6,5 @@ class AppRoute(StrEnum):
     LOGIN = "./login"
     PROJECTS = "./projects"
     PROFILE = "./profile"
+    TASKS = "./tasks"
     

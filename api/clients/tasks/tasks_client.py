@@ -30,7 +30,7 @@ class TasksClient:
                                 data=request.model_dump(by_alias=True, exclude={"upload_file"}),
                                 files={"upload_file": request.upload_file.read_bytes()})
 
-    def create_task_attachment(self, task_id: str, request: CreateAttachmentRequestSchema) -> Response:
+    def create_task_attachment(self, task_id: str, request: CreateAttachmentRequestSchema) -> CreateAttachmentResponseSchema:
         response = self.create_task_attachment_api(task_id, request)
         return CreateAttachmentResponseSchema.model_validate_json(response.text)
 
@@ -38,7 +38,7 @@ class TasksClient:
     def create_task_comment_api(self, task_id: str, request: CreateCommentRequestSchema) -> Response:
         return self.client.post(f"{APIRoutes.TASKS}/{task_id}/comments", json=request.model_dump(by_alias=True))
 
-    def create_task_comment(self, task_id: str, request: CreateCommentRequestSchema) -> Response:
+    def create_task_comment(self, task_id: str, request: CreateCommentRequestSchema) -> CreateCommentResponseSchema:
         response = self.create_task_comment_api(task_id, request)
         return CreateCommentResponseSchema.model_validate_json(response.text)
 

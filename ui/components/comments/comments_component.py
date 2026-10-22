@@ -2,6 +2,8 @@ from typing import List
 
 from playwright.sync_api import Page, Locator
 
+from api.clients.comments.comments_schema import CommentSchema
+from tools.api.fakers import fake
 from ui.components.base_component import BaseComponent
 from ui.components.comments.comment_card_component import CommentCardComponent
 from ui.elements.Text import Text
@@ -14,11 +16,11 @@ class CommentsComponent(BaseComponent):
         super().__init__(page)
 
         self.title = Text(page, "comments-title", "Comments title")
+        self.comment_card = CommentCardComponent(page, index=0)
         self.new_comment_textarea = Textarea(page, "new-comment-textarea",
                                             "Task page new comment textarea")
         self.submit_comment_button = Button(page, "submit-comment-button",
                                            "Task page submit comment button")
-
 
 
     @property
@@ -49,3 +51,12 @@ class CommentsComponent(BaseComponent):
         self.submit_comment_button.check_visible()
         self.submit_comment_button.check_enabled()
         self.submit_comment_button.check_have_text("Отправить")
+
+    def click_submit_comment_button(self):
+        self.submit_comment_button.click()
+
+    def fill_new_comment_textarea(self, comment: CommentSchema | None = None):
+        if comment is None:
+            comment = CommentSchema(**fake.comment())
+        self.new_comment_textarea.fill(comment.content)
+        return comment

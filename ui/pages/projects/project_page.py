@@ -3,6 +3,7 @@ from typing import List
 from playwright.sync_api import Page, Locator
 
 from api.clients.projects.projects_schema import ProjectSchema
+from api.clients.tasks.tasks_schema import TaskSchema
 from ui.components.navbar_component import NavbarComponent
 from ui.components.tasks.task_card_component import TaskCardComponent
 from ui.components.tasks.task_form_component import TaskFormComponent
@@ -109,9 +110,14 @@ class ProjectPage(BasePage):
     def click_create_task_button(self):
         self.create_task_button.click()
 
-    def check_tasks_cards(self):
-        for card in self.tasks_cards:
-            card.check_card()
+    def check_tasks_cards(self, data_list: List[TaskSchema]):
+        actual_count = self._all_tasks_cards.count()
+        assert actual_count == len(data_list)
+
+        for data in data_list:
+            title = data.title if hasattr(data, 'title') else data['title']
+            card = self.task_card_by_title(title)
+            card.check_card(data)
             card.check_attachments_button()
             card.check_comments_button()
             card.check_edit_button()

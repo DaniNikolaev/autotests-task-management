@@ -18,7 +18,7 @@ class TaskCardComponent(BaseComponent):
             self.root = self.page.get_by_test_id("task-card").nth(index)
 
         self.index = index
-        self.title = Text(page, f"card-task-title",
+        self.title = Text(self.root, f"card-task-title",
                           f"Task card title")
         self.attachments_button = Button(self.root, f"card-task-attachments-button",
                                         f"Task card attachments button")
@@ -32,7 +32,7 @@ class TaskCardComponent(BaseComponent):
                           f"Task card status")
         self.description = Text(self.root, f"card-task-description",
                                f"Task card description")
-        self.priority = Text(page, f"card-task-priority",
+        self.priority = Text(self.root, f"card-task-priority",
                             f"Task card priority")
         self.estimated_time = Text(self.root, f"card-task-estimated-time",
                                   f"Task card estimated time")
@@ -52,11 +52,11 @@ class TaskCardComponent(BaseComponent):
         self.comments_button.click()
 
     def check_edit_button(self):
-        self.attachments_button.check_visible()
-        self.attachments_button.check_enabled()
+        self.edit_button.check_visible()
+        self.edit_button.check_enabled()
 
     def click_edit_button(self):
-        self.attachments_button.click()
+        self.edit_button.click()
 
     def check_delete_button(self):
         self.delete_button.check_visible()
@@ -70,13 +70,13 @@ class TaskCardComponent(BaseComponent):
         self.title.check_have_text(data.title)
 
         self.status.check_visible()
-        self.status.check_have_text(data.status)
+        self.status.check_have_attribute("data-value", data.status)
 
         self.description.check_visible()
         self.description.check_have_text(data.description)
 
         self.priority.check_visible()
-        self.priority.check_have_text(data.priority)
+        self.priority.check_have_attribute("data-value", data.priority)
 
         self.estimated_time.check_visible()
         self.estimated_time.check_have_text(data.estimated_time)

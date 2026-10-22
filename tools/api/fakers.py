@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum, StrEnum
 
 from faker import Faker
@@ -59,33 +60,61 @@ class Fake:
     def task_priority(self) -> str:
         return self.faker.random_element(list(TaskPriority))
 
+    def is_edited(self) -> bool:
+        return self.faker.random_element([True, False])
+
+    def date_time(self) -> datetime:
+        return self.faker.date_time()
+
+    def random_element(self, elements):
+        return self.faker.random_element(elements)
+
+    def created_at(self) -> datetime:
+        return self.date_time()
+
+    def updated_at(self) -> datetime | None:
+        return self.random_element([self.date_time(), None])
+
     def registration_form(self) -> dict:
-        return {"email": self.faker.email(),
-                "password": self.faker.password(),
-                "first_name": self.faker.first_name(),
-                "last_name": self.faker.last_name()}
+        return {"email": self.email(),
+                "password": self.password(),
+                "first_name": self.first_name(),
+                "last_name": self.last_name()}
 
     def project_form(self) -> dict:
         return dict(
             id=self.faker.uuid4(),
             title=self.faker.sentence(),
-            description=self.faker.text(),
-            owner_user_id=self.faker.uuid4(),
-            created_at=self.faker.date_time(),
-            updated_at=self.faker.date_time()
+            description=self.text(),
+            owner_user_id=self.uuid4(),
+            created_at=self.date_time(),
+            updated_at=self.date_time()
         )
 
     def task_form(self) -> dict:
         return dict(
-            id=self.faker.uuid4(),
-            title=self.faker.sentence(),
-            description=self.faker.text(),
+            id=self.uuid4(),
+            title=self.sentence(),
+            description=self.text(),
             status=self.task_status(),
             priority=self.task_priority(),
             estimated_time=self.estimated_time(),
-            related_project_id=self.faker.uuid4(),
-            created_by_user_id=self.faker.uuid4(),
-            created_at=self.faker.date_time(),
-            updated_at=self.faker.date_time()
+            related_project_id=self.uuid4(),
+            created_by_user_id=self.uuid4(),
+            created_at=self.created_at(),
+            updated_at=self.updated_at()
         )
+
+    def comment(self) -> dict:
+        return dict(
+            id = self.uuid4(),
+            content = self.sentence(),
+            is_edited = self.is_edited(),
+            related_task_id = self.uuid4(),
+            author_user_id = self.uuid4(),
+            created_at = self.date_time().today(),
+            updated_at = self.updated_at()
+        )
+
+
 fake = Fake(faker=Faker())

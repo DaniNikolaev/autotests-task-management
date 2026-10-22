@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from playwright.sync_api import Page, Locator
@@ -20,13 +21,13 @@ class TaskPage(BasePage):
         super().__init__(page)
 
         self.navbar = NavbarComponent(page)
-        self.back_link = Link(page, "back-link",
+        self.back_link = Link(page, "back-to-project-link",
                               "Task page back link")
         self.title = Text(page, "task-title",
                           "Task page title")
-        self.edit_button = Button(page, "edit-task-button",
+        self.edit_button = Button(page, "task-edit-button",
                                   "Task page edit button")
-        self.delete_button = Button(page, "delete-task-button",
+        self.delete_button = Button(page, "task-delete-button",
                                     "Task page delete button")
         self.description = Text(page, "task-description",
                                "Task page description")
@@ -45,11 +46,24 @@ class TaskPage(BasePage):
         self.comments = CommentsComponent(page)
         self.attachments = AttachmentsComponent(page)
 
+    @property
+    def _all_comments_cards(self) -> Locator:
+        return self.page.get_by_test_id("comment-card")
+
+    def comment_card_by_content(self, title: str) -> CommentCardComponent:
+        card_locator = self._all_comments_cards.filter(has_text=title)
+        card_locator.first.wait_for(state="visible")
+        return CommentCardComponent(self.page, locator=card_locator.first)
+
+    @property
+    def comments_cards(self) -> List[CommentCardComponent]:
+        count = self._all_comments_cards.count()
+        return [CommentCardComponent(self.page, index=i) for i in range(count)]
 
     def check_back_link(self, project_id: str):
         self.back_link.check_visible()
-        self.back_link.check_have_attribute("href", f"/project/{project_id}")
-        self.back_link.check_have_text("Back")
+        self.back_link.check_have_attribute("href", f"/projects/{project_id}")
+        self.back_link.check_have_text("← Назад к проекту")
 
     def click_back_link(self):
         self.back_link.click()
@@ -80,11 +94,11 @@ class TaskPage(BasePage):
 
     def check_status(self, status: str):
         self.status.check_visible()
-        self.status.check_have_text(status)
+        self.status.check_have_attribute("data-value", status)
 
     def check_priority(self, priority: str):
         self.priority.check_visible()
-        self.priority.check_have_text(priority)
+        self.priority.check_have_attribute("data-value", priority)
 
     def check_estimated_time(self, estimated_time: str):
         self.estimated_time.check_visible()
@@ -94,10 +108,19 @@ class TaskPage(BasePage):
         self.project.check_visible()
         self.project.check_have_text(project)
 
-    def check_created(self, created: str):
+    def check_created(self, created_at: str | datetime):
         self.created.check_visible()
-        self.created.check_have_text(created)
+        if isinstance(created_at, datetime):
+            expected_text = created_at.strftime("%d.%m.%Y")
+        else:
+            expected_text = created_at
+        self.created.check_have_text(f"Создано: {expected_text}")
 
-    def check_updated(self, updated: str):
+    def check_updated(self, updated_at: str | datetime | None):
         self.updated.check_visible()
-        self.updated.check_have_text(updated)
+        if isinstance(updated_at, datetime):
+            expected_text = updated_at.strftime("%d.%m.%Y")
+            self.created.check_have_text(f"Обновлено: {expected_text}")
+        elif isinstance(updated_at, str):
+            expected_text = updated_at
+            self.created.check_have_text(f"Обновлено: {expected_text}")
