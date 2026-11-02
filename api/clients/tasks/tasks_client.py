@@ -1,8 +1,12 @@
+from typing import List
+
 import allure
 from httpx import Client, Response
 
-from api.clients.attachments.attachments_schema import CreateAttachmentRequestSchema, CreateAttachmentResponseSchema
-from api.clients.comments.comments_schema import CreateCommentRequestSchema, CreateCommentResponseSchema
+from api.clients.attachments.attachments_schema import CreateAttachmentRequestSchema, CreateAttachmentResponseSchema, \
+    GetAttachmentsResponseSchema
+from api.clients.comments.comments_schema import CreateCommentRequestSchema, CreateCommentResponseSchema, \
+    GetCommentsResponseSchema
 from api.clients.private_http_builder import get_private_http_client, AuthenticationUserSchema
 from api.clients.tasks.tasks_schema import UpdateTaskRequestSchema
 from tools.api.routes import APIRoutes
@@ -46,6 +50,17 @@ class TasksClient:
     def get_task_comments_api(self, task_id: str):
         return self.client.get(f"{APIRoutes.TASKS}/{task_id}/comments")
 
+    def get_task_comments(self, task_id: str) -> GetCommentsResponseSchema:
+        response = self.get_task_comments_api(task_id)
+        return GetCommentsResponseSchema.model_validate_json(response.text)
+
+    @allure.step("Get task attachments")
+    def get_task_attachments_api(self, task_id: str):
+        return self.client.get(f"{APIRoutes.TASKS}/{task_id}/attachments")
+
+    def get_task_attachments(self, task_id: str) -> GetAttachmentsResponseSchema:
+        response = self.get_task_attachments_api(task_id)
+        return GetAttachmentsResponseSchema.model_validate_json(response.text)
 
 def get_tasks_client(authentication_user: AuthenticationUserSchema) -> TasksClient:
     return TasksClient(client=get_private_http_client(authentication_user))

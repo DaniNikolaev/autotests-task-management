@@ -11,3 +11,8 @@ coverage.html
 coverage-results
 coverage-report.json
 coverage-history.json
+
+# artefacts
+browser-state.json
+tmp/
+.cache/

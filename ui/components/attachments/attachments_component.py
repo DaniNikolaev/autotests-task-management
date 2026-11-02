@@ -13,11 +13,17 @@ class AttachmentsComponent(BaseComponent):
         super().__init__(page)
 
         self.title = Text(page, "attachments-title", "Attachments title")
-        self.upload_button = Button(page, "upload-button", "Attachments upload button")
+        self.upload_button = Button(page, "open-upload-modal-button", "Attachments upload button")
+        self.attachment_card = AttachmentCardComponent(page, index=0)
 
     @property
     def _all_attachments_cards(self) -> Locator:
         return self.page.get_by_test_id("attachment-card")
+
+    def attachment_card_by_title(self, title: str) -> AttachmentCardComponent:
+        card_locator = self._all_attachments_cards.filter(has_text=title)
+        card_locator.first.wait_for(state="visible")
+        return AttachmentCardComponent(self.page, locator=card_locator.first)
 
     @property
     def attachments_cards(self) -> List[AttachmentCardComponent]:
@@ -28,7 +34,7 @@ class AttachmentsComponent(BaseComponent):
         self.title.check_visible()
         self.title.check_have_text(f"Вложения ({self._all_attachments_cards.count()})")
 
-    def check_upload_attachments_button(self):
+    def check_upload_button(self):
         self.upload_button.check_visible()
         self.upload_button.check_enabled()
         self.upload_button.check_have_text("Загрузить вложение")
@@ -36,3 +42,6 @@ class AttachmentsComponent(BaseComponent):
     def check_attachments_cards(self, data: List[dict] | None = None):
         for index, card in enumerate(self.attachments_cards):
             card.check_attachment(data[index])
+
+    def click_upload_button(self):
+        self.upload_button.click()

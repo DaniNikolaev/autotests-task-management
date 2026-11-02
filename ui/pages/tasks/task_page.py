@@ -5,6 +5,7 @@ from playwright.sync_api import Page, Locator
 
 from ui.components.attachments.attachment_card_component import AttachmentCardComponent
 from ui.components.attachments.attachments_component import AttachmentsComponent
+from ui.components.attachments.upload_attachment_component import UploadAttachmentComponent
 from ui.components.comments.comment_card_component import CommentCardComponent
 from ui.components.comments.comments_component import CommentsComponent
 from ui.components.navbar_component import NavbarComponent
@@ -45,20 +46,8 @@ class TaskPage(BasePage):
                                 "Task page updated")
         self.comments = CommentsComponent(page)
         self.attachments = AttachmentsComponent(page)
+        self.upload_attachment = UploadAttachmentComponent(page)
 
-    @property
-    def _all_comments_cards(self) -> Locator:
-        return self.page.get_by_test_id("comment-card")
-
-    def comment_card_by_content(self, title: str) -> CommentCardComponent:
-        card_locator = self._all_comments_cards.filter(has_text=title)
-        card_locator.first.wait_for(state="visible")
-        return CommentCardComponent(self.page, locator=card_locator.first)
-
-    @property
-    def comments_cards(self) -> List[CommentCardComponent]:
-        count = self._all_comments_cards.count()
-        return [CommentCardComponent(self.page, index=i) for i in range(count)]
 
     def check_back_link(self, project_id: str):
         self.back_link.check_visible()
@@ -120,7 +109,7 @@ class TaskPage(BasePage):
         self.updated.check_visible()
         if isinstance(updated_at, datetime):
             expected_text = updated_at.strftime("%d.%m.%Y")
-            self.created.check_have_text(f"Обновлено: {expected_text}")
+            self.updated.check_have_text(f"Обновлено: {expected_text}")
         elif isinstance(updated_at, str):
             expected_text = updated_at
-            self.created.check_have_text(f"Обновлено: {expected_text}")
+            self.updated.check_have_text(f"Обновлено: {expected_text}")

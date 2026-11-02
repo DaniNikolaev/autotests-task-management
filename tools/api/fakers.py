@@ -75,6 +75,18 @@ class Fake:
     def updated_at(self) -> datetime | None:
         return self.random_element([self.date_time(), None])
 
+    def file_name(self):
+        return self.faker.file_name()
+
+    def word(self):
+        return self.faker.word()
+
+    def file_directory(self):
+        return self.random_element([self.word(), None])
+
+    def url(self):
+        return self.faker.url()
+
     def registration_form(self) -> dict:
         return {"email": self.email(),
                 "password": self.password(),
@@ -114,6 +126,17 @@ class Fake:
             author_user_id = self.uuid4(),
             created_at = self.date_time().today(),
             updated_at = self.updated_at()
+        )
+
+    def attachment(self) -> dict:
+        return dict(
+            id = self.uuid4(),
+            filename = self.file_name(),
+            directory = self.file_directory(),
+            task_id = self.uuid4(),
+            uploaded_by = self.uuid4(),
+            created_at = self.date_time().today(),
+            url = self.url()
         )
 
 

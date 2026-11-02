@@ -25,7 +25,7 @@ class ProjectCardComponent(BaseComponent):
                                     "Project card delete button")
         self.description = Text(self.root, "project-card-description",
                                 "Project card description")
-        self.owner = Text(page, "project-card-owner",
+        self.owner = Text(self.root, "project-card-owner",
                           "Project card owner")
         self.date_created = Text(self.root, "project-card-date-created",
                                  "Project card date created")

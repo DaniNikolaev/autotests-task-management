@@ -24,4 +24,6 @@ class Input(BaseElement):
         with allure.step(step):
             logger.info(step)
             locator.clear()
-            
+
+    def check_have_placeholder(self, expected_placeholder: str, nth: int = 0, **kwargs):
+        self.check_have_attribute("placeholder", expected_placeholder, nth, **kwargs)

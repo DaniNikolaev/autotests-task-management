@@ -2,6 +2,7 @@ import allure
 import pytest
 
 from api.fixtures.users import UserFixture
+from tools.allure.tags import AllureTag
 from ui.pages.authentication.login_page import LoginPage
 
 
@@ -11,6 +12,8 @@ from ui.pages.authentication.login_page import LoginPage
 @pytest.mark.login
 class TestLogin:
     @allure.title("Test successful login")
+    @pytest.mark.smoke
+    @allure.tag(AllureTag.AUTHORIZATION.value)
     def test_successful_login(self, function_user: UserFixture, login_page: LoginPage):
         data = {"email": function_user.email, "password": function_user.password}
         login_page.check_title()

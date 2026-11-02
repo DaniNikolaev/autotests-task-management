@@ -70,7 +70,7 @@ class CommentCardComponent(BaseComponent):
     def click_delete_button(self):
         self.delete_button.click()
 
-    def check_comment(self, data: CommentSchema | None = None):
-        self.check_card(data)
+    def check_comment(self, data: CommentSchema):
+        self.check_content_and_date_card(data)
         self.check_edit_button()
         self.check_delete_button()

@@ -22,10 +22,14 @@ class CommentsComponent(BaseComponent):
         self.submit_comment_button = Button(page, "submit-comment-button",
                                            "Task page submit comment button")
 
-
     @property
     def _all_comments_cards(self) -> Locator:
         return self.page.get_by_test_id("comment-card")
+
+    def comment_card_by_content(self, title: str) -> CommentCardComponent:
+        card_locator = self._all_comments_cards.filter(has_text=title)
+        card_locator.first.wait_for(state="visible")
+        return CommentCardComponent(self.page, locator=card_locator.first)
 
     @property
     def comments_cards(self) -> List[CommentCardComponent]:

@@ -54,9 +54,7 @@ class ProjectsPage(BasePage):
             card.check_delete_button()
 
     def check_title_and_descriptions_projects_cards(self, data_list: List[ProjectSchema]):
-        actual_count = self._all_projects_cards.count()
-        print(actual_count, len(data_list))
-        assert actual_count == len(data_list)
+        expect(self._all_projects_cards).to_have_count(len(data_list))
 
         for data in data_list:
             title = data.title if hasattr(data, 'title') else data['title']

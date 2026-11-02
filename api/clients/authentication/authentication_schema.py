@@ -4,8 +4,8 @@ from tools.api.fakers import fake
 
 
 class LoginRequestSchema(BaseModel):
-    email: EmailStr = Field(default_factory=fake.email())
-    password: str = Field(default_factory=fake.password())
+    email: EmailStr = Field(default_factory=fake.email)
+    password: str = Field(default_factory=fake.password)
 
 
 class TokenSchema(BaseModel):

@@ -64,7 +64,7 @@ class TestTasks:
 
         assert_status_code(response.status_code, HTTPStatus.OK)
         assert_update_task_response(request, response_data)
-        validate_json_schema(response.json(), GetTaskResponseSchema.model_json_schema())
+        validate_json_schema(response.json(), UpdateTaskResponseSchema.model_json_schema())
 
     @allure.title("Delete task")
     def test_delete_task(self,

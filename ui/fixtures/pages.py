@@ -90,9 +90,9 @@ def project_page_with_tasks(
 @pytest.fixture
 def task_page(browser_page: Page,
               created_project: ProjectSchema,
-              function_task_for_ui: TaskFixture) -> ProjectPage:
-    p = ProjectPage(page=browser_page)
-    p.visit(f"{AppRoute.TASKS}{function_task_for_ui.id}")
+              function_task_for_ui: TaskFixture) -> TaskPage:
+    p = TaskPage(page=browser_page)
+    p.visit(f"{AppRoute.TASKS}/{function_task_for_ui.id}")
     return p
 
 

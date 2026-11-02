@@ -20,7 +20,7 @@ class AttachmentSchema(BaseModel):
 class CreateAttachmentRequestSchema(BaseModel):
     filename: str = Field(default_factory=lambda: f'{fake.uuid4()}.jpg')
     directory: str = Field(default="tests")
-    upload_file: FilePath
+    upload_file: FilePath = Field(default="testdata/attachments/attachment.jpg")
 
 
 class CreateAttachmentResponseSchema(BaseModel):
@@ -29,3 +29,7 @@ class CreateAttachmentResponseSchema(BaseModel):
 
 class GetAttachmentResponseSchema(BaseModel):
     attachment: AttachmentSchema
+
+
+class GetAttachmentsResponseSchema(BaseModel):
+    attachments: list[AttachmentSchema]

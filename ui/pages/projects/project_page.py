@@ -1,6 +1,6 @@
 from typing import List
 
-from playwright.sync_api import Page, Locator
+from playwright.sync_api import Page, Locator, expect
 
 from api.clients.projects.projects_schema import ProjectSchema
 from api.clients.tasks.tasks_schema import TaskSchema
@@ -111,8 +111,7 @@ class ProjectPage(BasePage):
         self.create_task_button.click()
 
     def check_tasks_cards(self, data_list: List[TaskSchema]):
-        actual_count = self._all_tasks_cards.count()
-        assert actual_count == len(data_list)
+        expect(self._all_tasks_cards).to_have_count(len(data_list))
 
         for data in data_list:
             title = data.title if hasattr(data, 'title') else data['title']
