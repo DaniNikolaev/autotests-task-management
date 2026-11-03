@@ -3,6 +3,7 @@ from typing import Generator, Any, List
 import pytest
 from playwright.sync_api import Page
 
+from api.clients.attachments.attachments_schema import AttachmentSchema
 from api.clients.comments.comments_schema import CommentSchema
 from api.clients.projects.projects_client import ProjectsClient
 from api.clients.projects.projects_schema import CreateProjectRequestSchema, ProjectSchema
@@ -113,6 +114,18 @@ def task_page_with_comments(
     browser_page_with_auth: Page,
     created_task_for_project: TaskSchema,
     created_comments_for_tasks: List[CommentSchema]
+) -> Generator[TaskPage, Any, None]:
+    task_page = TaskPage(page=browser_page_with_auth)
+    task_page.visit(f"/tasks/{created_task_for_project.id}")
+
+    yield task_page
+
+
+@pytest.fixture
+def task_page_with_attachments(
+    browser_page_with_auth: Page,
+    created_task_for_project: TaskSchema,
+    created_attachments_for_task: List[AttachmentSchema]
 ) -> Generator[TaskPage, Any, None]:
     task_page = TaskPage(page=browser_page_with_auth)
     task_page.visit(f"/tasks/{created_task_for_project.id}")

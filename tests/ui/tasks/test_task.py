@@ -4,6 +4,7 @@ import allure
 import pytest
 
 from api.clients.attachments.attachments_client import AttachmentsClient
+from api.clients.attachments.attachments_schema import AttachmentSchema
 from api.clients.comments.comments_schema import CommentSchema
 from api.clients.projects.projects_schema import ProjectSchema
 from api.clients.tasks.tasks_client import TasksClient
@@ -79,3 +80,31 @@ class TestTask:
             if att.filename == data.filename
         )
         task_page_with_auth.attachments.attachment_card.check_card(created_attachment)
+
+    @allure.title("Test page create attachment with not empty attachments list")
+    def test_page_create_attachment_with_not_empty_attachments_list(self,
+                            task_page_with_attachments: TaskPage,
+                            created_task_for_project: TaskSchema,
+                            created_attachments_for_task: List[AttachmentSchema],
+                            tasks_client_for_ui: TasksClient):
+        task_page_with_attachments.attachments.check_attachments_title()
+        for attachment in created_attachments_for_task:
+            attachment_card = task_page_with_attachments.attachments.attachment_card_by_title(
+                attachment.filename
+            )
+            attachment_card.check_name(attachment.filename)
+        task_page_with_attachments.attachments.check_upload_button()
+        task_page_with_attachments.attachments.click_upload_button()
+        task_page_with_attachments.upload_attachment.check_upload_attachment()
+        data = task_page_with_attachments.upload_attachment.fill_upload_attachment()
+        task_page_with_attachments.upload_attachment.check_upload_attachment(data)
+        task_page_with_attachments.upload_attachment.click_upload_button()
+        task_page_with_attachments.check_current_url(f"/tasks/{created_task_for_project.id}")
+        task_page_with_attachments.attachments.check_attachments_title()
+        get_attachments_response = tasks_client_for_ui.get_task_attachments(created_task_for_project.id)
+        created_attachment = next(
+            att for att in get_attachments_response.attachments
+            if att.filename == data.filename
+        )
+        attachment_card = task_page_with_attachments.attachments.attachment_card_by_title(data.filename)
+        attachment_card.check_card(created_attachment)
